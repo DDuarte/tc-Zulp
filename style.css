@@ -1,0 +1,77 @@
+@charset utf-8;
+body {
+    font: 100%/1.4;
+    font-family: Myriad Pro, Myriad, Verdana, Arial, Helvetica, Sans-Serif;
+    background: #000;
+    color: #FFF;
+    margin: 0;
+    padding: 0;
+}
+.container {
+    width: 80%;
+    max-width: 1260px;
+    min-width: 780px;
+    margin: 0 auto;
+}
+.content {
+    width: 80%;
+    float: left;
+    padding: 7px 0;
+}
+textarea {
+    height: 300px;
+    width: 710px;
+    box-shadow: 1px 1px 5px #FFF;
+    border-radius: 5px;
+    resize: none;
+}
+#logo {
+    width: 20%;
+    height: 90px;
+    display: block;
+}
+input.fancy {
+    margin: 10px;
+    background: Navy;
+    border: 1px solid #0d111a;
+    border-radius: 10px;
+    color: #FFF;
+    font-size: 12px;
+    font-weight: bold;
+    line-height: 1;
+    padding: 10px 0 12px 0;
+    text-align: center;
+    text-shadow: 0px -1px 1px #2c4d93;
+    width: 150px;
+    position: right;
+}
+#box {
+    width: 20%;
+    margin: 0;
+    padding: 0;
+}
+h4 {
+    color: red;
+}
+#log {
+    color: #D3D3D3;
+}
+#logcont {
+    font-size: 0.7em;
+}
+#txt
+{
+    max-width: 870px;
+    width: 870px;
+    box-shadow: 1px 1px 5px #FFF;
+    border-radius: 5px;
+    resize: none;
+    background: black;
+    display: block;
+    border: 1px solid #0d111a;
+    overflow: auto;
+}
+#div.content {
+    max-width: 870px;
+    overflow: auto;
+}
