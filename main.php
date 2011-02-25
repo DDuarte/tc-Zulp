@@ -71,8 +71,8 @@ if (isset($_POST['formdata']) && isset($dbh) && !isset($e)) {
             $spell = 65;
             $player = 25;
             // special data
-            $RegEx65 = '/Block Value 65: [0-9]{1,12}\/([0-9].[0-9]{1,12})/';
-            $RegEx66 = '/Block Value 66: [0-9]{1,12}\/([0-9]{1,12})/';
+            $RegEx65 = '/Block Value 65: [0-9]{1,12}\/([0-9](.[0-9]{1,12}|))/';
+            $RegEx66 = '/Block Value 66: [0-9]{1,12}\/([0-9](.[0-9]{1,12}|))/';
             preg_match($RegEx65, $data[$i], $tmp5);
             //var_dump($formData["blockdata"]);
             $boundingRadius = $tmp5[1];
