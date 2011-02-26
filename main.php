@@ -9,7 +9,6 @@ $player  = 25;
 $go      = 33; // supported
 $spell   = 65;
 
-
 if (isset($_POST['formdata']) && isset($dbh) && !isset($e)) {
     $formData = $_REQUEST['formdata'];
     $data = explode("Block Value 0:", $formData["blockdata"]);
@@ -18,8 +17,9 @@ if (isset($_POST['formdata']) && isset($dbh) && !isset($e)) {
         $data2 = explode("\n", $data[$i]);
         $RegEx = '/(Block Value ){1}([0-9]{1,3})(: {1}){1}([0-9]{1,12})/';
         foreach ($data2 as $key => $Value) {
-            preg_match($RegEx, $Value, $tmp);
-            if ($tmp[2] != "") $block[$tmp[2]] = $tmp[4];
+            preg_match($RegEx, $Value, $temp);
+            if ($temp[2] != "") $block[$temp[2]] = $temp[4];
+            // Note: commented out updatefields are not sent in sniffs
             $type           = $block[2];
             $entry          = $block[3];
             
@@ -68,27 +68,27 @@ if (isset($_POST['formdata']) && isset($dbh) && !isset($e)) {
             }
             $RegEx65 = '/Block Value 65: [0-9]{1,12}\/([0-9](.[0-9]{1,12}|))/'; // bounding radius
             $RegEx66 = '/Block Value 66: [0-9]{1,12}\/([0-9](.[0-9]{1,12}|))/'; // combat reach
-            preg_match($RegEx65, $data[$i], $tmp5);
-            $boundingRadius = $tmp5[1];
-            preg_match($RegEx66, $data[$i], $tmp6);
-            $combatReach = $tmp6[1];
+            preg_match($RegEx65, $data[$i], $tmp);
+            $boundingRadius = $tmp[1];
+            preg_match($RegEx66, $data[$i], $tmp);
+            $combatReach = $tmp[1];
             $regexwalk = '/Walk Speed: ([0-9]*(.|)[0-9]*)/'; // walk speed
             preg_match($regexwalk, $_REQUEST['formdata'][blockdata], $walker);
-            if(isset($walker)) $walkspeed = $walker[1]/2.5;
+            if(isset($walker)) $walkspeed = $walker[1]/$walkBase;
             $regexrun = '/Run Speed: ([0-9]*(.|)[0-9]*)/'; // run speed
             preg_match($regexrun, $_REQUEST['formdata'][blockdata], $runner);
-            if(isset($runner)) $runspeed = $runner[1]/8.0;
+            if(isset($runner)) $runspeed = $runner[1]/$runBase;
             $regexveh = '/Vehicle ID: ([0-9]*)/'; // vehicle id
             preg_match($regexveh, $_REQUEST['formdata'][blockdata], $vehicler);
             if(isset($vehicler)) $vehicle = $vehicler[1];
             
             //gameobject:
-            $gModel = $block[8];
-            $gFlags = $block[9];
-            $gRot1 = $block[10];
-            $gRot2 = $block[11];
-            $gRot3 = $block[12];
-            $gFaction = $block[15];
+            $gModel  = $block[8];
+            $gFlags  = $block[9];
+            $gRot1   = $block[10];
+            $gRot2   = $block[11];
+            $gRot3   = $block[12];
+            $gFaction= $block[15];
         }
         if (isset($block)) {
             switch ($type) {
@@ -112,7 +112,7 @@ if (isset($_POST['formdata']) && isset($dbh) && !isset($e)) {
                     }
                     // Levels & Exp
                     if (isset($level)) {
-                        // exp
+                        // Exp
                         $health_mod = $npc->Health_mod;
                         $basehp = $maxhp / $health_mod;
                         $basehp = round($basehp, 0);
@@ -351,7 +351,7 @@ if (isset($_POST['formdata']) && isset($dbh) && !isset($e)) {
                     $log .= "&#8226; ERROR: Type ($type) not found.<br />";
             }
         }
-        unset($tmp5,$tmp6,$walkspeed,$runspeed,$upheader,$upfoot,$eqheader,$addon,$aura,$auras,$basehp,$basehpi,$block,$boundingRadius,$bytes0,$bytes1,$bytes2,$cache,$cachefile,$class,$combatReach,$dded,$dynamicFlags,$emote,$entry,$eq,$eqs,$equip,$equip1,$equip2,$equip3,$equipe,$exp,$faction,$gFlags,$gLevel,$gModel,$gRot1,$gRot2,$gRot3,$gender,$header,$health_mod,$hpstat,$ins,$level,$maxLevel,$maxhp,$meleeTime,$minLevel,$model,$model2,$mount,$name,$ndec,$npc,$npcFlags,$powerType,$query,$race,$sql,$stmt,$type,$udder,$unitFlags,$up,$up2,$up3,$wh,$tmp);
+        unset($walkspeed,$runspeed,$upheader,$upfoot,$eqheader,$addon,$aura,$auras,$basehp,$basehpi,$block,$boundingRadius,$bytes0,$bytes1,$bytes2,$cache,$cachefile,$class,$combatReach,$dded,$dynamicFlags,$emote,$entry,$eq,$eqs,$equip,$equip1,$equip2,$equip3,$equipe,$exp,$faction,$gFlags,$gLevel,$gModel,$gRot1,$gRot2,$gRot3,$gender,$header,$health_mod,$hpstat,$ins,$level,$maxLevel,$maxhp,$meleeTime,$minLevel,$model,$model2,$mount,$name,$ndec,$npc,$npcFlags,$powerType,$query,$race,$sql,$stmt,$type,$udder,$unitFlags,$up,$up2,$up3,$wh,$tmp,$temp);
         $i++;
         $sqlres = new GeSHi($result, sql);
     }

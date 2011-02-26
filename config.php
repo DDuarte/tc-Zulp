@@ -12,4 +12,7 @@ catch (PDOException $e)
 {
     $stat = $e->getMessage();
 }
+
+$walkBase = 2.5; // Walk speed base value
+$runBase = 8.0; // Run speed base value
 ?>
