@@ -3,7 +3,7 @@
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <title>Mah Parser</title>
+    <title>ZULP</title>
     <link href="style.css" rel="stylesheet" type="text/css">
     <script type="text/javascript">
         function toggleDiv() {
@@ -49,9 +49,7 @@
                         </div>
                     </td>
                 </tr>
-                    <td><i><small><br />
-                    Initial work by Dark0r, [M]axx; Re-wrote and improved by Nay - Smth&trade; 2010</small></i>
-                    </td>
+                    <td><i><small><br />&copy; Darkor/Maxx/Nay</small></i></td>
             </table>
         </div>
         <div class="content">
@@ -61,9 +59,7 @@
                         <td>Input:</td>
                     </tr>
                     <tr>
-                        <td>
-                            <textarea name="formdata[blockdata]"><?php echo $formData["blockdata"]; ?></textarea>
-                        </td>
+                        <td><textarea name="formdata[blockdata]"><?php echo $formData["blockdata"]; ?></textarea></td>
                     </tr>
                     <tr>
                         <td><input type="submit" name="formdata[send]" id="save" class="fancy"/></td>
@@ -73,9 +69,7 @@
                         <td>Result:</td>
                     </tr>
                     <tr>
-                        <td>
-                            <div class="content" id="txt"><?php echo $sqlres->parse_code(); $dbh = null;?></div>
-                        </td>
+                        <td><div class="content" id="txt"><?php echo $sqlres->parse_code(); $dbh = null;?></div></td>
                     <?php } ?>
                     </tr>
                 </table>

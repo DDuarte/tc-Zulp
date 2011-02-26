@@ -1,6 +1,15 @@
 <?php
 include_once("config.php");
 include_once ("geshi.php");
+
+//types enum
+$item    = 3;
+$creature= 9; // supported
+$player  = 25;
+$go      = 33; // supported
+$spell   = 65;
+
+
 if (isset($_POST['formdata']) && isset($dbh) && !isset($e)) {
     $formData = $_REQUEST['formdata'];
     $data = explode("Block Value 0:", $formData["blockdata"]);
@@ -11,85 +20,76 @@ if (isset($_POST['formdata']) && isset($dbh) && !isset($e)) {
         foreach ($data2 as $key => $Value) {
             preg_match($RegEx, $Value, $tmp);
             if ($tmp[2] != "") $block[$tmp[2]] = $tmp[4];
-            $type = $block[2]; // done
-            $entry = $block[3]; // done: creatures
-            // creature
-            $bytes0 = $block[23]; // done
-            $maxhp = $block[32]; // done
-            $level = $block[54]; // done
-            $faction = $block[55]; // done
-            $equip1 = $block[56]; // done
-            $equip2 = $block[57]; // done
-            $equip3 = $block[58]; // done
-            $unitFlags = $block[59]; // done
-            $aura = $block[61]; // done
-            $meleeTime = $block[62]; // done
-            //$meleetime2    =$block[63]; // dupe
-            //$rangedtime    =$block[64];
-            $model = $block[67]; // done
-            $model2 = $block[68]; // dupe
-            $mount = $block[69]; // done
-            //$mindmg        =$block[70];
-            //$maxdmg        =$block[71];
-            $bytes1 = $block[74]; // done
-            $dynamicFlags = $block[79]; // done
-            $npcFlags = $block[82]; // done
-            $emote = $block[83]; // done
-            //$resistance1   =$block[99];
-            //$resistance2   =$block[100];
-            //$resistance3   =$block[101];
-            //$resistance4   =$block[102];
-            //$resistance5   =$block[103];
-            //$resistance6   =$block[104];
-            //$resistance7   =$block[105];
-            //$manamod       =$block[120];
-            //$healthmod     =$block[121];
-            $bytes2 = $block[122]; // done
-            //$meleeap       =$block[123];
-            //$dmgmultiplier =$block[125];
-            //$rangedap      =$block[126];
-            //$rangedmindmg  =$block[129];
-            //$rangedmaxdmg  =$block[130];
-            //gameobject
+            $type           = $block[2];
+            $entry          = $block[3];
+            
+            //creature:
+            $bytes0         = $block[23];
+            $maxhp          = $block[32];
+            $level          = $block[54];
+            $faction        = $block[55];
+            $equip1         = $block[56];
+            $equip2         = $block[57];
+            $equip3         = $block[58];
+            $unitFlags      = $block[59];
+            $aura           = $block[61];
+            $meleeTime      = $block[62];
+            //$meleetime2   = $block[63]; // dupe
+            //$rangedtime   = $block[64];
+            $model          = $block[67];
+            $model2         = $block[68]; // dupe
+            $mount          = $block[69];
+            //$mindmg       = $block[70];
+            //$maxdmg       = $block[71];
+            $bytes1         = $block[74];
+            $dynamicFlags   = $block[79];
+            $npcFlags       = $block[82];
+            $emote          = $block[83];
+            //$resistance1  = $block[99];
+            //$resistance2  = $block[100];
+            //$resistance3  = $block[101];
+            //$resistance4  = $block[102];
+            //$resistance5  = $block[103];
+            //$resistance6  = $block[104];
+            //$resistance7  = $block[105];
+            //$manamod      = $block[120];
+            //$healthmod    = $block[121];
+            $bytes2         = $block[122];
+            //$meleeap      = $block[123];
+            //$dmgmultiplier= $block[125];
+            //$rangedap     = $block[126];
+            //$rangedmindmg = $block[129];
+            //$rangedmaxdmg = $block[130];
+            if (isset($bytes0)) {
+                $powerType= ($bytes0 & 2147483647) >> 24;
+                $gender   = ($bytes0 & 16711680) >> 16;
+                $class    = ($bytes0 & 65280) >> 8;
+                $race     = ($bytes0 & 255);
+            }
+            $RegEx65 = '/Block Value 65: [0-9]{1,12}\/([0-9](.[0-9]{1,12}|))/'; // bounding radius
+            $RegEx66 = '/Block Value 66: [0-9]{1,12}\/([0-9](.[0-9]{1,12}|))/'; // combat reach
+            preg_match($RegEx65, $data[$i], $tmp5);
+            $boundingRadius = $tmp5[1];
+            preg_match($RegEx66, $data[$i], $tmp6);
+            $combatReach = $tmp6[1];
+            $regexwalk = '/Walk Speed: ([0-9]*(.|)[0-9]*)/'; // walk speed
+            preg_match($regexwalk, $_REQUEST['formdata'][blockdata], $walker);
+            if(isset($walker)) $walkspeed = $walker[1]/2.5;
+            $regexrun = '/Run Speed: ([0-9]*(.|)[0-9]*)/'; // run speed
+            preg_match($regexrun, $_REQUEST['formdata'][blockdata], $runner);
+            if(isset($runner)) $runspeed = $runner[1]/8.0;
+            $regexveh = '/Vehicle ID: ([0-9]*)/'; // vehicle id
+            preg_match($regexveh, $_REQUEST['formdata'][blockdata], $vehicler);
+            if(isset($vehicler)) $vehicle = $vehicler[1];
+            
+            //gameobject:
             $gModel = $block[8];
             $gFlags = $block[9];
             $gRot1 = $block[10];
             $gRot2 = $block[11];
             $gRot3 = $block[12];
             $gFaction = $block[15];
-            //bytes0
-            if (isset($bytes0)) {
-                $powerType = ($bytes0 & 2147483647) >> 24;
-                $gender = ($bytes0 & 16711680) >> 16;
-                $class = ($bytes0 & 65280) >> 8;
-                $race = ($bytes0 & 255);
-            }
-            //types enum
-            $creature = 9;
-            $go = 33;
-            $item = 3;
-            $spell = 65;
-            $player = 25;
-            // special data
-            $RegEx65 = '/Block Value 65: [0-9]{1,12}\/([0-9](.[0-9]{1,12}|))/';
-            $RegEx66 = '/Block Value 66: [0-9]{1,12}\/([0-9](.[0-9]{1,12}|))/';
-            preg_match($RegEx65, $data[$i], $tmp5);
-            //var_dump($formData["blockdata"]);
-            $boundingRadius = $tmp5[1];
-            preg_match($RegEx66, $data[$i], $tmp6);
-            $combatReach = $tmp6[1];
-            $regexwalk = '/Walk Speed: ([0-9]*(.|)[0-9]*)/';
-            preg_match($regexwalk, $_REQUEST['formdata'][blockdata], $walker);
-            if(isset($walker)) $walkspeed = $walker[1]/2.5;
-            $regexrun = '/Run Speed: ([0-9]*(.|)[0-9]*)/';
-            preg_match($regexrun, $_REQUEST['formdata'][blockdata], $runner);
-            if(isset($runner)) $runspeed = $runner[1]/8.0;
-            $regexveh = '/Vehicle ID: ([0-9]*)/';
-            preg_match($regexveh, $_REQUEST['formdata'][blockdata], $vehicler);
-            if(isset($vehicler)) $vehicle = $vehicler[1];
         }
-
-        //include("blocks.php");
         if (isset($block)) {
             switch ($type) {
                 case $creature:
@@ -113,8 +113,6 @@ if (isset($_POST['formdata']) && isset($dbh) && !isset($e)) {
                     // Levels & Exp
                     if (isset($level)) {
                         // exp
-                        //preg_match('/<li>Health: ([0-9]*(,|)[0-9]*<\/li>)/', $wh, $tmp);
-                        //$maxhealth = preg_replace('/,/', '', $tmp[1]);
                         $health_mod = $npc->Health_mod;
                         $basehp = $maxhp / $health_mod;
                         $basehp = round($basehp, 0);
@@ -160,24 +158,24 @@ if (isset($_POST['formdata']) && isset($dbh) && !isset($e)) {
                         }
                         else $log .= "&#8226; Level of $entry ($name) does not need an update.<br />";
                     }
-                    // Base attack time
+                    // Baseattack time
                     if (isset($meleeTime)) {
                         if ($meleeTime != $npc->baseattacktime) $up .= " `baseattacktime`=$meleeTime ";
                         else $log .= "&#8226; Baseattacktime of $entry ($name) does not need an update.<br />";
                     }
                     // Npc flags
                     if (isset($npcFlags)) {
-                        if ($npcFlags != $npc->npcflags) $up .= " `npcflag`=`npcflag`|$npcFlags ";
+                        if ($npcFlags != $npc->npcflags) $up .= " `npcflag`=`npcflag`|$npcFlags "; // need bitwise math here
                         else $log .= "&#8226; Npcflags of $entry ($name) does not need an update.<br />";
                     }
                     // Unit flags
                     if (isset($unitFlags)) {
-                        if ($unitFlags != $npc->unit_flags) $up .= " `unit_flags`=`unit_flags`|$unitFlags ";
+                        if ($unitFlags != $npc->unit_flags) $up .= " `unit_flags`=`unit_flags`|$unitFlags "; // need bitwise math here
                         else $log .= "&#8226; Unit_flags of $entry ($name) does not need an update.<br />";
                     }
                     // Dynamic flags
                     if (isset($dynamicFlags)) {
-                        if ($dynamicFlags != $npc->dynamicflags) $up .= " `dynamicflags`=`dynamicflags`|$dynamicFlags ";
+                        if ($dynamicFlags != $npc->dynamicflags) $up .= " `dynamicflags`=`dynamicflags`|$dynamicFlags "; // need bitwise math here
                         else $log .= "&#8226; Dynamicflags of $entry ($name)does not need an update.<br />";
                     }
                     //Equipment template
@@ -249,7 +247,6 @@ if (isset($_POST['formdata']) && isset($dbh) && !isset($e)) {
                         }
                     }
                     //Creature_template_addon
-                    //if (isset($mount) || isset($bytes2)) {
                     if (isset($mount) || isset($bytes1) || isset($bytes2) || isset($emote) || isset($aura)) {
                         if (empty($mount)) $mount = 0;
                         if (empty($bytes1)) $bytes1 = 0;
@@ -263,23 +260,19 @@ if (isset($_POST['formdata']) && isset($dbh) && !isset($e)) {
                         if ($addon == FALSE) {
                             $ins .= "-- Addon data for creature $entry ($name)\n";
                             $ins .= "DELETE FROM `creature_template_addon` WHERE `entry`=$entry;\n";
-                            //$ins .= "INSERT INTO `creature_template_addon` (`entry`,`mount`,`bytes2`) VALUES\n";
                             $ins .= "INSERT INTO `creature_template_addon` (`entry`,`mount`,`bytes1`,`bytes2`,`emote`,`auras`) VALUES\n";
-                            //$ins .= "($entry,$mount,$bytes2);\n";
                             $ins .= "($entry,$mount,$bytes1,$bytes2,$emote, $auras); -- $name\n";
                         }
-                        //elseif ($addon->mount == $mount && $addon->bytes2 == $bytes2) // && $addon->auras == $auras)
-                        elseif ($addon->mount == $mount && $addon->bytes1 == $bytes1 && $addon->bytes2 == $bytes2 && $addon->emote == $emote) // && $addon->auras == $auras)
+                        elseif ($addon->mount == $mount && $addon->bytes1 == $bytes1 && $addon->bytes2 == $bytes2 && $addon->emote == $emote)
                             $log .= "&#8226; Addon (bytes1,bytes2,mount and emote) of $entry ($name) does not need an update.<br />";
                         else {
                             $ins .= "-- Addon data for creature $entry ($name)\n";
-                            //$ins .= "UPDATE creature_template_addon SET `bytes2`=$bytes2,`mount`=$mount\n\n";
                             $ins .= "UPDATE `creature_template_addon` SET `bytes1`=$bytes1,`bytes2`=$bytes2,`mount`=$mount,`emote`=$emote,`auras`=$auras WHERE `entry`=$entry; -- $name\n\n";
                         }
                     }
                     //Walk & Run speed
                     if (isset($walkspeed) && isset($runspeed)) {
-                        if ($runspeed = 1.1428571428571) $runspeed = 1.14286;
+                        if ($runspeed = 1.1428571428571) $runspeed = 1.14286; // need round function here
                         if ($walkspeed != $npc->speed_walk) $up .= " `speed_walk`=$walkspeed ";
                         else $log .= "&#8226; Walk speed of $entry ($name) does not need an update.<br />";
                         if($runspeed != $npc->speed_run) $up .= " `speed_run`=$runspeed ";
@@ -292,6 +285,7 @@ if (isset($_POST['formdata']) && isset($dbh) && !isset($e)) {
                         else $log .= "&#8226; Vehicleid of $entry ($name) does not need an update.<br />";
                     }
                     
+                    // sql output
                     $up2 = preg_replace('/  /', ',', $up);
                     $up3 = preg_replace('/ /', '', $up2);
                     $header = "-- Template updates for creature $entry ($name)\n";
@@ -302,7 +296,6 @@ if (isset($_POST['formdata']) && isset($dbh) && !isset($e)) {
                     if (isset($up) || isset($ins)) $result .= $header;
                     if (isset($up)) $result .= $upheader . $up3 . $upfoot . $nn;
                     if (isset($ins)) $result .= $ins;
-                    //$result .= "\n\n";
 
                     break;
                 case $go:
@@ -332,6 +325,7 @@ if (isset($_POST['formdata']) && isset($dbh) && !isset($e)) {
                         if ($gFaction != $go->faction) $up .= " `faction`=$gFaction ";
                         else $log .= "&#8226; Faction of $entry ($name) does not need an update.<br />";
                     }
+                    // sql output
                     $up2 = preg_replace('/  /', ',', $up);
                     $up3 = preg_replace('/ /', '', $up2);
                     $header = "-- Template updates for gameobject $entry ($name)\n";
@@ -342,8 +336,7 @@ if (isset($_POST['formdata']) && isset($dbh) && !isset($e)) {
                     if (isset($up) || isset($ins)) $result .= $header;
                     if (isset($up)) $result .= $upheader . $up3 . $upfoot . $nn;
                     if (isset($ins)) $result .= $ins;
-                    //$result .= "\n\n";
-                
+
                     break;
                 case $item:
                     $log .= "&#8226; $entry is an item - not supported<br />";
@@ -358,8 +351,7 @@ if (isset($_POST['formdata']) && isset($dbh) && !isset($e)) {
                     $log .= "&#8226; ERROR: Type ($type) not found.<br />";
             }
         }
-        unset($walkspeed,$runspeed,$upheader,$upfoot,$eqheader,$addon,$aura,$auras,$basehp,$basehpi,$block,$boundingRadius,$bytes0,$bytes1,$bytes2,$cache,$cachefile,$class,$combatReach,$dded,$dynamicFlags,$emote,$entry,$eq,$eqs,$equip,$equip1,$equip2,$equip3,$equipe,$exp,$faction,$gFlags,$gLevel,$gModel,$gRot1,$gRot2,$gRot3,$gender,$header,$health_mod,$hpstat,$ins,$level,$maxLevel,$maxhp,$meleeTime,$minLevel,$model,$model2,$mount,$name,$ndec,$npc,$npcFlags,$powerType,$query,$race,$sql,$stmt,$type,$udder,$unitFlags,$up,$up2,$up3,$wh,$tmp);
-        unset($boundingRadius,$tmp5,$tmp6,$gender,$combatReach);
+        unset($tmp5,$tmp6,$walkspeed,$runspeed,$upheader,$upfoot,$eqheader,$addon,$aura,$auras,$basehp,$basehpi,$block,$boundingRadius,$bytes0,$bytes1,$bytes2,$cache,$cachefile,$class,$combatReach,$dded,$dynamicFlags,$emote,$entry,$eq,$eqs,$equip,$equip1,$equip2,$equip3,$equipe,$exp,$faction,$gFlags,$gLevel,$gModel,$gRot1,$gRot2,$gRot3,$gender,$header,$health_mod,$hpstat,$ins,$level,$maxLevel,$maxhp,$meleeTime,$minLevel,$model,$model2,$mount,$name,$ndec,$npc,$npcFlags,$powerType,$query,$race,$sql,$stmt,$type,$udder,$unitFlags,$up,$up2,$up3,$wh,$tmp);
         $i++;
         $sqlres = new GeSHi($result, sql);
     }
