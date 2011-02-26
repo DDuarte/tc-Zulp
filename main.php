@@ -110,7 +110,7 @@ if (isset($_POST['formdata']) && isset($dbh) && !isset($e)) {
                     }
                     // Factions
                     if (isset($faction)) {
-                        if ($faction = 1 || $faction = 2 || $faction = 3 || $faction = 4 || $faction = 5 || $faction = 6 || $faction = 115 || $faction = 116 || $faction = 1610 || $faction = 1629) $faction = 35; // player factions
+                        if ($faction == 1 || $faction == 2 || $faction == 3 || $faction == 4 || $faction == 5 || $faction == 6 || $faction == 115 || $faction == 116 || $faction == 1610 || $faction == 1629) $faction = 35; // player factions
                         if ($faction != $npc->faction_A) $up .= " `faction_A`=$faction  `faction_H`=$faction ";
                         else $log .= "&#8226; Faction of $entry ($name) does not need an update.<br />";
                     }
@@ -123,7 +123,7 @@ if (isset($_POST['formdata']) && isset($dbh) && !isset($e)) {
                         $sql = "SELECT * FROM creature_classlevelstats WHERE level=$level AND class=$class";
                         $stmt = $dbh->query($sql);
                         $hpstat = $stmt->fetch(PDO::FETCH_OBJ);
-                        if (!isset($hpstat) || ($basehp = !$hpstat->basehp0) || ($basehp = !$hpstat->basehp1) || ($basehp = !$hpstat->basehp2))
+                        if (!isset($hpstat) || ($basehp == !$hpstat->basehp0) || ($basehp == !$hpstat->basehp1) || ($basehp == !$hpstat->basehp2))
                             $log .= "&#8226; Exp (bhp$basehp, l$level, c$class) not found for creature $entry ($name).<br />";
                         else {
                             $basehpi = $maxhp / $health_mod;
@@ -276,7 +276,7 @@ if (isset($_POST['formdata']) && isset($dbh) && !isset($e)) {
                     }
                     // Walk & Run speed
                     if (isset($walkspeed) && isset($runspeed)) {
-                        if ($runspeed = 1.1428571428571) $runspeed = 1.14286; // need round function here
+                        if ($runspeed == 1.1428571428571) $runspeed = 1.14286; // need round function here
                         if ($walkspeed != $npc->speed_walk) $up .= " `speed_walk`=$walkspeed ";
                         else $log .= "&#8226; Walk speed of $entry ($name) does not need an update.<br />";
                         if($runspeed != $npc->speed_run) $up .= " `speed_run`=$runspeed ";
