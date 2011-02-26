@@ -3,16 +3,16 @@ include_once("config.php");
 include_once ("geshi.php");
 
 //types enum
-$item    = 3;
-$creature= 9; // supported
-$player  = 25;
-$go      = 33; // supported
-$spell   = 65;
+$item     = 3;
+$creature = 9; // supported
+$player   = 25;
+$go       = 33; // supported
+$spell    = 65;
 
 if (isset($_POST['formdata']) && isset($dbh) && !isset($e)) {
     $formData = $_REQUEST['formdata'];
     $data = explode("Block Value 0:", $formData["blockdata"]);
-    $d = preg_match_all('/Block Value 0:/',$formData["blockdata"],$s);
+    $d = preg_match_all('/Block Value 0:/',$formData["blockdata"],$s); // returns the number of "Block Value 0:" found in input data
     while ($i <= $d) {
         $data2 = explode("\n", $data[$i]);
         $RegEx = '/(Block Value ){1}([0-9]{1,3})(: {1}){1}([0-9]{1,12})/';
@@ -20,46 +20,47 @@ if (isset($_POST['formdata']) && isset($dbh) && !isset($e)) {
             preg_match($RegEx, $Value, $temp);
             if ($temp[2] != "") $block[$temp[2]] = $temp[4];
             // Note: commented out updatefields are not sent in sniffs
-            $type           = $block[2];
-            $entry          = $block[3];
+            $type           = $block[2]; // OBJECT_FIELD_TYPE
+            $entry          = $block[3]; // OBJECT_FIELD_ENTRY
+            // $size        = $block[4]; // OBJECT_FIELD_SCALE_X
             
-            //creature:
-            $bytes0         = $block[23];
-            $maxhp          = $block[32];
-            $level          = $block[54];
-            $faction        = $block[55];
-            $equip1         = $block[56];
-            $equip2         = $block[57];
-            $equip3         = $block[58];
-            $unitFlags      = $block[59];
-            $aura           = $block[61];
-            $meleeTime      = $block[62];
-            //$meleetime2   = $block[63]; // dupe
-            //$rangedtime   = $block[64];
-            $model          = $block[67];
-            $model2         = $block[68]; // dupe
-            $mount          = $block[69];
-            //$mindmg       = $block[70];
-            //$maxdmg       = $block[71];
-            $bytes1         = $block[74];
-            $dynamicFlags   = $block[79];
-            $npcFlags       = $block[82];
-            $emote          = $block[83];
-            //$resistance1  = $block[99];
-            //$resistance2  = $block[100];
-            //$resistance3  = $block[101];
-            //$resistance4  = $block[102];
-            //$resistance5  = $block[103];
-            //$resistance6  = $block[104];
-            //$resistance7  = $block[105];
-            //$manamod      = $block[120];
-            //$healthmod    = $block[121];
-            $bytes2         = $block[122];
-            //$meleeap      = $block[123];
-            //$dmgmultiplier= $block[125];
-            //$rangedap     = $block[126];
-            //$rangedmindmg = $block[129];
-            //$rangedmaxdmg = $block[130];
+            // Updatefields: creature only
+            $bytes0         = $block[23]; // UNIT_FIELD_BYTES_0
+            $maxhp          = $block[32]; // UNIT_FIELD_MAXHEALTH
+            $level          = $block[54]; // UNIT_FIELD_LEVEL
+            $faction        = $block[55]; // UNIT_FIELD_FACTIONTEMPLATE
+            $equip1         = $block[56]; // UNIT_VIRTUAL_ITEM_SLOT_ID
+            $equip2         = $block[57]; // UNIT_VIRTUAL_ITEM_SLOT_ID
+            $equip3         = $block[58]; // UNIT_VIRTUAL_ITEM_SLOT_ID
+            $unitFlags      = $block[59]; // UNIT_FIELD_FLAGS
+            $aura           = $block[61]; // UNIT_FIELD_AURASTATE
+            $meleeTime      = $block[62]; // UNIT_FIELD_BASEATTACKTIME
+            // $meleetime2  = $block[63]; // UNIT_FIELD_BASEATTACKTIME dupe
+            // $rangedtime  = $block[64]; // UNIT_FIELD_RANGEDATTACKTIME
+            $model          = $block[67]; // UNIT_FIELD_DISPLAYID
+            $model2         = $block[68]; // UNIT_FIELD_NATIVEDISPLAYID dupe
+            $mount          = $block[69]; // UNIT_FIELD_MOUNTDISPLAYID
+            // $mindmg      = $block[70]; // UNIT_FIELD_MINDAMAGE
+            // $maxdmg      = $block[71]; // UNIT_FIELD_MAXDAMAGE
+            $bytes1         = $block[74]; // UNIT_FIELD_BYTES_1
+            $dynamicFlags   = $block[79]; // UNIT_DYNAMIC_FLAGS
+            $npcFlags       = $block[82]; // UNIT_NPC_FLAGS
+            $emote          = $block[83]; // UNIT_NPC_EMOTESTATE
+            // $resistance1 = $block[99]; // UNIT_FIELD_RESISTANCES
+            // $resistance2 = $block[100]; // UNIT_FIELD_RESISTANCES
+            // $resistance3 = $block[101]; // UNIT_FIELD_RESISTANCES
+            // $resistance4 = $block[102]; // UNIT_FIELD_RESISTANCES
+            // $resistance5 = $block[103]; // UNIT_FIELD_RESISTANCES
+            // $resistance6 = $block[104]; // UNIT_FIELD_RESISTANCES
+            // $resistance7 = $block[105]; // UNIT_FIELD_RESISTANCES
+            // $manamod     = $block[120]; // UNIT_FIELD_BASE_MANA
+            // $healthmod   = $block[121]; // UNIT_FIELD_BASE_HEALTH
+            $bytes2         = $block[122]; // UNIT_FIELD_BYTES_2
+            // $meleeap     = $block[123]; // UNIT_FIELD_ATTACK_POWER
+            // $dmgmultiplier = $block[125]; // UNIT_FIELD_ATTACK_POWER_MULTIPLIER
+            // $rangedap    = $block[126]; // UNIT_FIELD_RANGED_ATTACK_POWER
+            // $rangedmindmg = $block[129]; // UNIT_FIELD_MINRANGEDDAMAGE
+            // $rangedmaxdmg = $block[130]; // UNIT_FIELD_MAXRANGEDDAMAGE
             if (isset($bytes0)) {
                 $powerType= ($bytes0 & 2147483647) >> 24;
                 $gender   = ($bytes0 & 16711680) >> 16;
@@ -82,13 +83,15 @@ if (isset($_POST['formdata']) && isset($dbh) && !isset($e)) {
             preg_match($regexveh, $_REQUEST['formdata'][blockdata], $vehicler);
             if(isset($vehicler)) $vehicle = $vehicler[1];
             
-            //gameobject:
-            $gModel  = $block[8];
-            $gFlags  = $block[9];
-            $gRot1   = $block[10];
-            $gRot2   = $block[11];
-            $gRot3   = $block[12];
-            $gFaction= $block[15];
+            // Update fields: gameobject only
+            $gModel  = $block[8]; // GAMEOBJECT_DISPLAYID
+            $gFlags  = $block[9]; // GAMEOBJECT_FLAGS
+            // $gRot1   = $block[10]; // GAMEOBJECT_PARENTROTATION
+            // $gRot2   = $block[11]; // GAMEOBJECT_PARENTROTATION
+            // $gRot3   = $block[12]; // GAMEOBJECT_PARENTROTATION
+            $gFaction = $block[15]; // GAMEOBJECT_FACTION
+            // &gLevel = $block[16]; // GAMEOBJECT_LEVEL (not implemented on DB)
+            // $gBytes1 = $block[17]; // GAMEOBJECT_BYTES_1 (unknown use)
         }
         if (isset($block)) {
             switch ($type) {
@@ -131,7 +134,7 @@ if (isset($_POST['formdata']) && isset($dbh) && !isset($e)) {
                             elseif (isset($exp)) $up .= " `exp`=$exp ";
                             else $log .= "&#8226; Exp (bhp$basehp, l$level, c$class) not found for creature $entry ($name).<br />";
                         }
-                        //Levels
+                        // Levels
                         if (($npc->minlevel != $npc->maxlevel)) { // shoulda query wowhead instead and check if minlevel != maxlevel
                             $cache = dirname(__FILE__) . "\cache\c$entry.txt";
                             if (!file_exists($cache) || filemtime($cache) < (time() - $cache_check_time)) {
@@ -178,7 +181,7 @@ if (isset($_POST['formdata']) && isset($dbh) && !isset($e)) {
                         if ($dynamicFlags != $npc->dynamicflags) $up .= " `dynamicflags`=`dynamicflags`|$dynamicFlags "; // need bitwise math here
                         else $log .= "&#8226; Dynamicflags of $entry ($name)does not need an update.<br />";
                     }
-                    //Equipment template
+                    // Equipment template
                     if (isset($equip1) || isset($equip2) || isset($equip3)) {
                         if (empty($equip1)) $equip1 = 0;
                         if (empty($equip2)) $equip2 = 0;
@@ -216,12 +219,12 @@ if (isset($_POST['formdata']) && isset($dbh) && !isset($e)) {
                             }
                         }
                     }
-                    //Unit_Class
+                    // Unit_Class
                     if (isset($class)) {
                         if ($class != $npc->unit_class) $up .= " `unit_class`=$class ";
                         else $log .= "&#8226; Unit_class of $entry ($name) does not need an update.<br />";
                     }
-                    //Model
+                    // Model
                     if (isset($model2)) {
                         /*if ($model2 != $npc->modelid1 || $model2 != $npc->modelid2 || $model2 != $npc->modelid3 || $model2 != $npc->modelid4)
                             $up .= " `modelidX`=$model2 "; // WDB data, shouldn't need update
@@ -246,7 +249,7 @@ if (isset($_POST['formdata']) && isset($dbh) && !isset($e)) {
                             $ins .= "UPDATE `creature_model_info` SET `bounding_radius`=$boundingRadius,`combat_reach`=$combatReach,`gender`=$gender WHERE `modelid`=$model2; -- $name\n";
                         }
                     }
-                    //Creature_template_addon
+                    // Creature_template_addon
                     if (isset($mount) || isset($bytes1) || isset($bytes2) || isset($emote) || isset($aura)) {
                         if (empty($mount)) $mount = 0;
                         if (empty($bytes1)) $bytes1 = 0;
@@ -270,7 +273,7 @@ if (isset($_POST['formdata']) && isset($dbh) && !isset($e)) {
                             $ins .= "UPDATE `creature_template_addon` SET `bytes1`=$bytes1,`bytes2`=$bytes2,`mount`=$mount,`emote`=$emote,`auras`=$auras WHERE `entry`=$entry; -- $name\n\n";
                         }
                     }
-                    //Walk & Run speed
+                    // Walk & Run speed
                     if (isset($walkspeed) && isset($runspeed)) {
                         if ($runspeed = 1.1428571428571) $runspeed = 1.14286; // need round function here
                         if ($walkspeed != $npc->speed_walk) $up .= " `speed_walk`=$walkspeed ";
@@ -278,16 +281,15 @@ if (isset($_POST['formdata']) && isset($dbh) && !isset($e)) {
                         if($runspeed != $npc->speed_run) $up .= " `speed_run`=$runspeed ";
                         else $log .= "&#8226; Run speed of $entry ($name) does not need an update.<br />";
                     }
-                    //Vehicle
+                    // Vehicle
                     if (isset($vehicle)) {
-                        var_dump($vehicle);
                         if($vehicle != $npc->vehicleid) $up .= " `vehicleid`=$vehicle ";
                         else $log .= "&#8226; Vehicleid of $entry ($name) does not need an update.<br />";
                     }
                     
                     // sql output
-                    $up2 = preg_replace('/  /', ',', $up);
-                    $up3 = preg_replace('/ /', '', $up2);
+                    $up2 = preg_replace('/  /', ',', $up); // replace double spaces by commas
+                    $up3 = preg_replace('/ /', '', $up2); // remove single spaces
                     $header = "-- Template updates for creature $entry ($name)\n";
                     $upheader = "UPDATE `creature_template` SET ";
                     $upfoot = " WHERE `entry`=$entry;";
@@ -326,8 +328,8 @@ if (isset($_POST['formdata']) && isset($dbh) && !isset($e)) {
                         else $log .= "&#8226; Faction of $entry ($name) does not need an update.<br />";
                     }
                     // sql output
-                    $up2 = preg_replace('/  /', ',', $up);
-                    $up3 = preg_replace('/ /', '', $up2);
+                    $up2 = preg_replace('/  /', ',', $up); // replace double spaces by commas
+                    $up3 = preg_replace('/ /', '', $up2); // remove single spaces
                     $header = "-- Template updates for gameobject $entry ($name)\n";
                     $upheader = "UPDATE `gameobject_template` SET ";
                     $upfoot = " WHERE `entry`=$entry;";
