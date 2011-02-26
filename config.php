@@ -6,7 +6,7 @@ $password = 'xxx';
 $database = 'world';
 try {
     $dbh = new PDO("mysql:host=$hostname;dbname=$database", $username, $password);
-    if (!isset($e)) $stat = "Connection to <i>$hostname</i>, <i>$database</i> database with username <i>$username</i> successfull.\n";
+    if (!isset($e)) $stat = "Connection to database was successfull.\n";
 }
 catch (PDOException $e)
 {
