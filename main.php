@@ -110,6 +110,7 @@ if (isset($_POST['formdata']) && isset($dbh) && !isset($e)) {
                     }
                     // Factions
                     if (isset($faction)) {
+                        if ($faction = 1 || $faction = 2 || $faction = 3 || $faction = 4 || $faction = 5 || $faction = 6 || $faction = 115 || $faction = 116 || $faction = 1610 || $faction = 1629) $faction = 35; // player factions
                         if ($faction != $npc->faction_A) $up .= " `faction_A`=$faction  `faction_H`=$faction ";
                         else $log .= "&#8226; Faction of $entry ($name) does not need an update.<br />";
                     }
