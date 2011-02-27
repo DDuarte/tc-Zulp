@@ -283,9 +283,20 @@ if (isset($_POST['formdata']) && isset($dbh) && !isset($e)) {
                     }
                     // Vehicle
                     if (isset($vehicle)) {
-                        if($vehicle != $npc->vehicleid) $up .= " `vehicleid`=$vehicle ";
+                        if($vehicle != $npc->VehicleId) $up .= " `VehicleId`=$vehicle ";
                         else $log .= "&#8226; Vehicleid of $entry ($name) does not need an update.<br />";
                     }
+                    
+                    // Damage
+                    $sql = "SELECT map FROM creature WHERE id =$entry LIMIT 1;";
+                    $stmt = $dbh->query($sql);
+                    $spawn = $stmt->fetch(PDO::FETCH_OBJ);
+                    $map = $spawn->map;
+                    var_dump($map);
+                    if (empty($map))
+                        $log .= "&#8984; $entry ($name) is not spawned in DB.<br />";
+                    
+                    
                     
                     // sql output
                     $up2 = preg_replace('/  /', ',', $up); // replace double spaces by commas
