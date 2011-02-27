@@ -324,6 +324,7 @@ if (isset($_POST['formdata']) && isset($dbh) && !isset($e)) {
                     }
                     // Faction
                     if (isset($gFaction)) {
+                        if ($gFaction == 1 || $gFaction == 2 || $gFaction == 3 || $gFaction == 4 || $gFaction == 5 || $gFaction == 6 || $gFaction == 115 || $gFaction == 116 || $gFaction == 1610 || $gFaction == 1629) $gFaction = 0; // player factions
                         if ($gFaction != $go->faction) $up .= " `faction`=$gFaction ";
                         else $log .= "&#8226; Faction of $entry ($name) does not need an update.<br />";
                     }
