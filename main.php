@@ -33,7 +33,7 @@ if (isset($_POST['formdata']) && isset($dbh) && !isset($e)) {
             $equip2         = $block[57]; // UNIT_VIRTUAL_ITEM_SLOT_ID
             $equip3         = $block[58]; // UNIT_VIRTUAL_ITEM_SLOT_ID
             $unitFlags      = $block[59]; // UNIT_FIELD_FLAGS
-            $aura           = $block[61]; // UNIT_FIELD_AURASTATE
+            // $aura        = $block[61]; // UNIT_FIELD_AURASTATE
             $meleeTime      = $block[62]; // UNIT_FIELD_BASEATTACKTIME
             // $meleetime2  = $block[63]; // UNIT_FIELD_BASEATTACKTIME dupe
             // $rangedtime  = $block[64]; // UNIT_FIELD_RANGEDATTACKTIME
@@ -251,13 +251,12 @@ if (isset($_POST['formdata']) && isset($dbh) && !isset($e)) {
                         }
                     }
                     // Creature_template_addon
-                    if (isset($mount) || isset($bytes1) || isset($bytes2) || isset($emote) || isset($aura)) {
+                    if (isset($mount) || isset($bytes1) || isset($bytes2) || isset($emote)) {
                         if (empty($mount)) $mount = 0;
                         if (empty($bytes1)) $bytes1 = 0;
                         if (empty($bytes2)) $bytes2 = 0;
                         if (empty($emote)) $emote = 0;
-                        if (empty($aura)) $auras = 'NULL';
-                        else $auras = "'$aura 0'";
+                        $auras = 'NULL';
                         $sql = "SELECT * FROM creature_template_addon WHERE entry=$entry";
                         $stmt = $dbh->query($sql);
                         $addon = $stmt->fetch(PDO::FETCH_OBJ);
@@ -354,7 +353,7 @@ if (isset($_POST['formdata']) && isset($dbh) && !isset($e)) {
                     $log .= "&#8226; ERROR: Type ($type) not found.<br />";
             }
         }
-        unset($walkspeed,$runspeed,$upheader,$upfoot,$eqheader,$addon,$aura,$auras,$basehp,$basehpi,$block,$boundingRadius,$bytes0,$bytes1,$bytes2,$cache,$cachefile,$class,$combatReach,$dded,$dynamicFlags,$emote,$entry,$eq,$eqs,$equip,$equip1,$equip2,$equip3,$equipe,$exp,$faction,$gFlags,$gLevel,$gModel,$gRot1,$gRot2,$gRot3,$gender,$header,$health_mod,$hpstat,$ins,$level,$maxLevel,$maxhp,$meleeTime,$minLevel,$model,$model2,$mount,$name,$ndec,$npc,$npcFlags,$powerType,$query,$race,$sql,$stmt,$type,$udder,$unitFlags,$up,$up2,$up3,$wh,$tmp,$temp);
+        unset($walkspeed,$runspeed,$upheader,$upfoot,$eqheader,$addon,$basehp,$basehpi,$block,$boundingRadius,$bytes0,$bytes1,$bytes2,$cache,$cachefile,$class,$combatReach,$dded,$dynamicFlags,$emote,$entry,$eq,$eqs,$equip,$equip1,$equip2,$equip3,$equipe,$exp,$faction,$gFlags,$gLevel,$gModel,$gRot1,$gRot2,$gRot3,$gender,$header,$health_mod,$hpstat,$ins,$level,$maxLevel,$maxhp,$meleeTime,$minLevel,$model,$model2,$mount,$name,$ndec,$npc,$npcFlags,$powerType,$query,$race,$sql,$stmt,$type,$udder,$unitFlags,$up,$up2,$up3,$wh,$tmp,$temp);
         $i++;
         $sqlres = new GeSHi($result, sql);
     }
