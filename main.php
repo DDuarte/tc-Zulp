@@ -169,7 +169,7 @@ if (isset($_POST['formdata']) && isset($dbh) && !isset($e)) {
                     }
                     // Npc flags
                     if (isset($npcFlags)) {
-                        if ($npcFlags != $npc->npcflags) $up .= " `npcflag`=`npcflag`|$npcFlags "; // need bitwise math here
+                        if ($npcFlags != $npc->npcflag) $up .= " `npcflag`=`npcflag`|$npcFlags "; // need bitwise math here
                         else $log .= "&#8226; Npcflags of $entry ($name) does not need an update.<br />";
                     }
                     // Unit flags
@@ -275,7 +275,7 @@ if (isset($_POST['formdata']) && isset($dbh) && !isset($e)) {
                     }
                     // Walk & Run speed
                     if (isset($walkspeed) && isset($runspeed)) {
-                        if ($runspeed == 1.1428571428571) $runspeed = 1.14286; // need round function here
+                        $runspeed = round($runspeed ,5);
                         if ($walkspeed != $npc->speed_walk) $up .= " `speed_walk`=$walkspeed ";
                         else $log .= "&#8226; Walk speed of $entry ($name) does not need an update.<br />";
                         if($runspeed != $npc->speed_run) $up .= " `speed_run`=$runspeed ";
