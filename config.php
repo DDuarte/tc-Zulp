@@ -1,18 +1,48 @@
 <?php
-$cache_check_time = 2592000; // (1 month) it will check wowhead if cache is older than this time
-$hostname = 'localhost';
-$username = 'xxx';
-$password = 'xxx';
-$database = 'world';
-try {
-    $dbh = new PDO("mysql:host=$hostname;dbname=$database", $username, $password);
-    if (!isset($e)) $stat = "Connection to database was successfull.\n";
-}
-catch (PDOException $e)
-{
-    $stat = $e->getMessage();
-}
+/**
+ * 
+ * Maximum cache time (seconds)
+ * Default: 2592000 (one month)
+ * @var int
+ */
+$cache_check_time = 2592000;
+/**
+ * 
+ * Database hostname
+ * Default: localhost
+ * @var string
+ */
+$db_host = 'localhost';
+/**
+ * 
+ * Database username
+ * @var string
+ */
+$db_user = 'root';
+/**
+ * 
+ * Database password
+ * @var string
+ */
+$db_pass = 'root';
+/**
+ * 
+ * Database name
+ * Default: world
+ * @var string
+ */
+$db_db = 'world';
 
-$walkBase = 2.5; // Walk speed base value
+/**
+ * 
+ * Creature walk speed base value
+ * @var int
+ */
+$walkBase = 2.5;
+/**
+ * 
+ * Creature run speed base value
+ * @var int
+ */
 $runBase = 7.0; // Run speed base value
 ?>

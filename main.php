@@ -1,6 +1,8 @@
 <?php
-include_once("config.php");
-include_once ("geshi.php");
+include_once 'db.php';
+include_once 'config.php';
+include_once 'geshi.php';
+include_once 'utility.php';
 
 //types enum
 $item     = 3;
@@ -8,6 +10,19 @@ $creature = 9; // supported
 $player   = 25;
 $go       = 33; // supported
 $spell    = 65;
+
+$log = '';
+$formData = '';
+$formData["blockdata"] = '';
+$i = 0;
+$result = '';
+$up = '';
+
+$RegEx65 = '/Block Value 65: [0-9]{1,12}\/([0-9](.[0-9]{1,12}|))/'; // bounding radius
+$RegEx66 = '/Block Value 66: [0-9]{1,12}\/([0-9](.[0-9]{1,12}|))/'; // combat reach
+$regexwalk = '/Walk Speed: ([0-9]*(.|)[0-9]*)/'; // walk speed
+$regexrun = '/Run Speed: ([0-9]*(.|)[0-9]*)/'; // run speed
+$regexveh = '/Vehicle ID: ([0-9]*)/'; // vehicle id
 
 if (isset($_POST['formdata']) && isset($dbh) && !isset($e)) {
     $formData = $_REQUEST['formdata'];
@@ -67,20 +82,16 @@ if (isset($_POST['formdata']) && isset($dbh) && !isset($e)) {
                 $class    = ($bytes0 & 65280) >> 8;
                 $race     = ($bytes0 & 255);
             }
-            $RegEx65 = '/Block Value 65: [0-9]{1,12}\/([0-9](.[0-9]{1,12}|))/'; // bounding radius
-            $RegEx66 = '/Block Value 66: [0-9]{1,12}\/([0-9](.[0-9]{1,12}|))/'; // combat reach
+            
             preg_match($RegEx65, $data[$i], $tmp);
             $boundingRadius = $tmp[1];
             preg_match($RegEx66, $data[$i], $tmp);
             $combatReach = $tmp[1];
-            $regexwalk = '/Walk Speed: ([0-9]*(.|)[0-9]*)/'; // walk speed
-            preg_match($regexwalk, $_REQUEST['formdata'][blockdata], $walker);
+            preg_match($regexwalk, $_REQUEST['formdata']['blockdata'], $walker);
             if(isset($walker)) $walkspeed = $walker[1]/$walkBase;
-            $regexrun = '/Run Speed: ([0-9]*(.|)[0-9]*)/'; // run speed
-            preg_match($regexrun, $_REQUEST['formdata'][blockdata], $runner);
+            preg_match($regexrun, $_REQUEST['formdata']['blockdata'], $runner);
             if(isset($runner)) $runspeed = $runner[1]/$runBase;
-            $regexveh = '/Vehicle ID: ([0-9]*)/'; // vehicle id
-            preg_match($regexveh, $_REQUEST['formdata'][blockdata], $vehicler);
+            preg_match($regexveh, $_REQUEST['formdata']['blockdata'], $vehicler);
             if(isset($vehicler)) $vehicle = $vehicler[1];
             
             // Update fields: gameobject only
@@ -212,7 +223,7 @@ if (isset($_POST['formdata']) && isset($dbh) && !isset($e)) {
                                 $ins .= "-- Equipment of $entry ($name)\n";
                                 $ins .= "DELETE FROM `creature_equip_template` WHERE `entry`=@EquiEntry;\n";
                                 $ins .= "INSERT INTO `creature_equip_template` (`entry`,`equipentry1`,`equipentry2`,`equipentry3`) VALUES\n";
-                                $ins .= "(@Entry,$equip1,$equip2,$equip3);\n";
+                                $ins .= "(@EquiEntry,$equip1,$equip2,$equip3);\n";
                             }
                             else {
                                 $equipe = $eq->entry;
@@ -292,15 +303,36 @@ if (isset($_POST['formdata']) && isset($dbh) && !isset($e)) {
                     $stmt = $dbh->query($sql);
                     $spawn = $stmt->fetch(PDO::FETCH_OBJ);
                     $map = $spawn->map;
-                    var_dump($map);
                     if (empty($map))
                         $log .= "&#8984; $entry ($name) is not spawned in DB.<br />";
                     
-                    
-                    
+                    switch ($class) {
+                        case 1: // warrior
+                            if ($level <= 60) {
+                                $mindmg = 1.5959 * $level;
+                                $maxdmg = 2.1188 * $level;
+                                $minrangedmg = 1.0984 * $level;
+                                $maxrangedmg = 1.6152 * $level;
+                                // $maxrangedattackpower = -1 * 10^(-8) * $level^6 + 2*10^(-6) * $level^5 - 0,0001 * $level^4 + 0,004 * $level^3 - 0,0408 * $level^2 + 0,1111 * $level + 0.978;
+                            }
+                            else if ($level >= 61 && $level <=70) {
+                                $mindmg = 10.309 * $level + 150.2;
+                                $maxdmg = 14.909 * $level + 208.6;
+                                $minrangedmg = 9.7333 * $level + 117.47;
+                                $maxrangedmg = 14.345 * $level + 174.40;
+                            }
+                            else if ($level >= 71 && $level <= 83) {
+                                $mindmg = 17.549 * $level + 261.23;
+                                $maxdmg = 20.511 * $level + 388.19;
+                                $minrangedmg = 9.2857 * $level + 250.36;
+                                $maxrangedmg = 12.423 * $level + 377.35;
+                            }
+                            else $log .= "&#8984; Unknown level($level) for $entry ($name).<br />";
+                            }
+
                     // sql output
-                    $up2 = preg_replace('/  /', ',', $up); // replace double spaces by commas
-                    $up3 = preg_replace('/ /', '', $up2); // remove single spaces
+                    $up2 = commatize($up);
+                    $up3 = spaceLess($up2);
                     $header = "-- Template updates for creature $entry ($name)\n";
                     $upheader = "UPDATE `creature_template` SET ";
                     $upfoot = " WHERE `entry`=$entry;";
@@ -309,7 +341,6 @@ if (isset($_POST['formdata']) && isset($dbh) && !isset($e)) {
                     if (isset($up) || isset($ins)) $result .= $header;
                     if (isset($up)) $result .= $upheader . $up3 . $upfoot . $nn;
                     if (isset($ins)) $result .= $ins;
-
                     break;
                 case $go:
                     $sql = "SELECT * FROM gameobject_template WHERE entry =$entry";
@@ -340,8 +371,8 @@ if (isset($_POST['formdata']) && isset($dbh) && !isset($e)) {
                         else $log .= "&#8226; Faction of $entry ($name) does not need an update.<br />";
                     }
                     // sql output
-                    $up2 = preg_replace('/  /', ',', $up); // replace double spaces by commas
-                    $up3 = preg_replace('/ /', '', $up2); // remove single spaces
+                    $up2 = commatize($up);
+                    $up3 = spaceLess($up2);
                     $header = "-- Template updates for gameobject $entry ($name)\n";
                     $upheader = "UPDATE `gameobject_template` SET ";
                     $upfoot = " WHERE `entry`=$entry;";
@@ -367,7 +398,7 @@ if (isset($_POST['formdata']) && isset($dbh) && !isset($e)) {
         }
         unset($vehicle,$vehicler,$walkspeed,$runspeed,$upheader,$upfoot,$eqheader,$addon,$basehp,$basehpi,$block,$boundingRadius,$bytes0,$bytes1,$bytes2,$cache,$cachefile,$class,$combatReach,$dded,$dynamicFlags,$emote,$entry,$eq,$eqs,$equip,$equip1,$equip2,$equip3,$equipe,$exp,$faction,$gFlags,$gLevel,$gModel,$gRot1,$gRot2,$gRot3,$gender,$header,$health_mod,$hpstat,$ins,$level,$maxLevel,$maxhp,$meleeTime,$minLevel,$model,$model2,$mount,$name,$ndec,$npc,$npcFlags,$powerType,$query,$race,$sql,$stmt,$type,$udder,$unitFlags,$up,$up2,$up3,$wh,$tmp,$temp);
         $i++;
-        $sqlres = new GeSHi($result, sql);
+        $sqlres = new GeSHi($result, 'sql');
     }
 }
 ?>

@@ -1,25 +1,10 @@
-<?php include('main.php') ?>
+<?php include 'main.php'; ?>
 <!DOCTYPE HTML>
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <title>ZULP</title>
     <link href="style.css" rel="stylesheet" type="text/css">
-    <script type="text/javascript">
-        function toggleDiv() {
-            if (document.getElementById("LoginBox").style.display == "block") {
-                document.getElementById("LoginBox").style.display = "none";
-            }
-            else {
-                document.getElementById("LoginBox").style.display = "block";
-            }
-        }
-        function SelectAll(id)
-        {
-            document.getElementById(id).focus();
-            document.getElementById(id).select();
-        }
-    </script>
 </head>
 <body>
     <div class="container">
@@ -36,20 +21,12 @@
                 </tr>
                 <tr>
                     <td>
-                        <h4 id=log><?php if (isset($log)) echo "Log"; ?></h4>
+                        <h4 id=log><?php if ($log != '') echo "Log"; ?></h4>
                         <div id=logcont><?php echo $log ?></div>
-                        <input type="button" value="Change DB" onclick="toggleDiv()" class="fancy" />
-                        <div id="LoginBox" style="display:none;">
-                            <form method="post" />
-                                TODO<br />
-                                <input type="text" name="server" placeholder="Server" /><br />
-                                <input type="text" name="user" placeholder="Username" /><br />
-                                <input type="text" name="pass" placeholder="Password" /><br />
-                                <input type="text" name="db" placeholder="World Database" /><br />
-                        </div>
                     </td>
+                   
                 </tr>
-                    <td><i><small><br />&copy; Darkor/Maxx/Nay</small></i></td>
+                <td><i><small><br />&copy; Nay</small></i></td>
             </table>
         </div>
         <div class="content">
