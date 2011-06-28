@@ -111,8 +111,9 @@ if (isset($_POST['formdata']) && isset($dbh) && !isset($e)) {
                     $stmt = $dbh->query($sql);
                     $npc = $stmt->fetch(PDO::FETCH_OBJ);
                     // Get name
-                    if (!empty($npc->name)) {
+                    if (!empty($npc->entry)) {
                         $name = $npc->name;
+						if (empty($name)) $name = "NONAME";
                         $log .= "&#8984; $entry ($name) is a creature.<br />";
                     }
                     else {
@@ -315,8 +316,9 @@ if (isset($_POST['formdata']) && isset($dbh) && !isset($e)) {
                     $stmt = $dbh->query($sql);
                     $go = $stmt->fetch(PDO::FETCH_OBJ);
                     // Get name
-                    if (!empty($go->name)) {
-                        $name = $go->name;
+                    if (!empty($go->entry)) {
+						$name = $go->name;
+                        if (empty($name)) $name = "NONAME";
                         $log .= "&#8984; $entry ($name) is a gameobject.<br />";
                     }
                     else {
