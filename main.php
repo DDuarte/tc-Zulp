@@ -203,18 +203,18 @@ if (isset($_POST['formdata']) && isset($dbh) && !isset($e)) {
                             $sql = "SELECT * FROM creature_equip_template WHERE entry =$equip";
                             $stmt = $dbh->query($sql);
                             $eqs = $stmt->fetch(PDO::FETCH_OBJ);
-                            if ($eqs->equipentry1 == $equip1 && $eqs->equipentry2 == $equip2 && $eqs->equipentry3 == $equip3)
+                            if ($eqs->itemEntry1 == $equip1 && $eqs->itemEntry2 == $equip2 && $eqs->itemEntry3 == $equip3)
                                 $log .= "&#8226; Equip template of $entry ($name) does not need an update.<br />";
                             else {
                                 $eqheader .= "SET @EquiEntry = XXX; -- (creature_equip_template.entry - need 1)\n";
                                 $up .= " `equipment_id`=@EquiEntry ";
                                 $ins .= "-- Equipment of $entry ($name)\n";
                                 $ins .= "DELETE FROM `creature_equip_template` WHERE `entry`=@EquiEntry;\n";
-                                $ins .= "INSERT INTO `creature_equip_template` (`entry`,`equipentry1`,`equipentry2`,`equipentry3`) VALUES \n";
+                                $ins .= "INSERT INTO `creature_equip_template` (`entry`,`itemEntry1`,`itemEntry2`,`itemEntry3`) VALUES \n";
                                 $ins .= "(@EquiEntry,$equip1,$equip2,$equip3);\n";
                             }
                         } else {
-                            $sql = "SELECT * FROM creature_equip_template WHERE equipentry1=$equip1 AND equipentry2=$equip2 AND equipentry3=$equip3";
+                            $sql = "SELECT * FROM creature_equip_template WHERE itemEntry1=$equip1 AND itemEntry2=$equip2 AND itemEntry3=$equip3";
                             $stmt = $dbh->query($sql);
                             $eq = $stmt->fetch(PDO::FETCH_OBJ);
                             if ($eq == FALSE) {
@@ -222,7 +222,7 @@ if (isset($_POST['formdata']) && isset($dbh) && !isset($e)) {
                                 $up .= " `equipment_id`=@EquiEntry ";
                                 $ins .= "-- Equipment of $entry ($name)\n";
                                 $ins .= "DELETE FROM `creature_equip_template` WHERE `entry`=@EquiEntry;\n";
-                                $ins .= "INSERT INTO `creature_equip_template` (`entry`,`equipentry1`,`equipentry2`,`equipentry3`) VALUES\n";
+                                $ins .= "INSERT INTO `creature_equip_template` (`entry`,`itemEntry1`,`itemEntry2`,`itemEntry3`) VALUES\n";
                                 $ins .= "(@EquiEntry,$equip1,$equip2,$equip3);\n";
                             }
                             else {
@@ -298,38 +298,6 @@ if (isset($_POST['formdata']) && isset($dbh) && !isset($e)) {
                         else $log .= "&#8226; Vehicleid of $entry ($name) does not need an update.<br />";
                     }
                     
-                    // Damage
-                    $sql = "SELECT map FROM creature WHERE id =$entry LIMIT 1;";
-                    $stmt = $dbh->query($sql);
-                    $spawn = $stmt->fetch(PDO::FETCH_OBJ);
-                    $map = $spawn->map;
-                    if (empty($map))
-                        $log .= "&#8984; $entry ($name) is not spawned in DB.<br />";
-                    
-                    switch ($class) {
-                        case 1: // warrior
-                            if ($level <= 60) {
-                                $mindmg = 1.5959 * $level;
-                                $maxdmg = 2.1188 * $level;
-                                $minrangedmg = 1.0984 * $level;
-                                $maxrangedmg = 1.6152 * $level;
-                                // $maxrangedattackpower = -1 * 10^(-8) * $level^6 + 2*10^(-6) * $level^5 - 0,0001 * $level^4 + 0,004 * $level^3 - 0,0408 * $level^2 + 0,1111 * $level + 0.978;
-                            }
-                            else if ($level >= 61 && $level <=70) {
-                                $mindmg = 10.309 * $level + 150.2;
-                                $maxdmg = 14.909 * $level + 208.6;
-                                $minrangedmg = 9.7333 * $level + 117.47;
-                                $maxrangedmg = 14.345 * $level + 174.40;
-                            }
-                            else if ($level >= 71 && $level <= 83) {
-                                $mindmg = 17.549 * $level + 261.23;
-                                $maxdmg = 20.511 * $level + 388.19;
-                                $minrangedmg = 9.2857 * $level + 250.36;
-                                $maxrangedmg = 12.423 * $level + 377.35;
-                            }
-                            else $log .= "&#8984; Unknown level($level) for $entry ($name).<br />";
-                            }
-
                     // sql output
                     $up2 = commatize($up);
                     $up3 = spaceLess($up2);
