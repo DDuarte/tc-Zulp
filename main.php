@@ -200,7 +200,7 @@ if (isset($_POST['formdata']) && isset($dbh) && !isset($e)) {
                                 fclose($cachefile);
                             }
                             else $wh = file_get_contents($cache);
-                            preg_match('/<li>Level: ([0-9]*) - ([0-9]*)<\/li>/', $wh, $tmp);
+                            preg_match('/\[li\]Level: ([0-9]*) - ([0-9]*)\[\/li\]/', $wh, $tmp);
                             $minLevel = $tmp[1];
                             $maxLevel = $tmp[2];
                             if (!isset($minLevel) && !isset($maxLevel))
