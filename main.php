@@ -18,8 +18,8 @@ $i = 0;
 $result = '';
 $up = '';
 
-$RegEx65 = '/Block Value 65: [0-9]{1,12}\/([0-9](.[0-9]{1,12}|))/'; // bounding radius
-$RegEx66 = '/Block Value 66: [0-9]{1,12}\/([0-9](.[0-9]{1,12}|))/'; // combat reach
+$RegEx65 = '/Block Value 65: [0-9]{1,12}\/([0-9]+(.[0-9]{1,12}|))/'; // bounding radius
+$RegEx66 = '/Block Value 66: [0-9]{1,12}\/([0-9]+(.[0-9]{1,12}|))/'; // combat reach
 $regexwalk = '/Walk Speed: ([0-9]*(.|)[0-9]*)/'; // walk speed
 $regexrun = '/Run Speed: ([0-9]*(.|)[0-9]*)/'; // run speed
 $regexveh = '/Vehicle ID: ([0-9]*)/'; // vehicle id
