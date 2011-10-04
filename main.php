@@ -18,8 +18,6 @@ $i = 0;
 $result = '';
 $up = '';
 
-$RegEx65 = '/Block Value 65: [0-9]{1,12}\/([0-9]+(.[0-9]{1,12}|))/'; // bounding radius
-$RegEx66 = '/Block Value 66: [0-9]{1,12}\/([0-9]+(.[0-9]{1,12}|))/'; // combat reach
 $regexwalk = '/Walk Speed: ([0-9]*(.|)[0-9]*)/'; // walk speed
 $regexrun = '/Run Speed: ([0-9]*(.|)[0-9]*)/'; // run speed
 $regexveh = '/Vehicle ID: ([0-9]*)/'; // vehicle id
@@ -77,6 +75,8 @@ if (isset($_POST['formdata']) && isset($dbh) && !isset($e)) {
 				// $rangedap    = $block[126]; // UNIT_FIELD_RANGED_ATTACK_POWER
 				// $rangedmindmg = $block[129]; // UNIT_FIELD_MINRANGEDDAMAGE
 				// $rangedmaxdmg = $block[130]; // UNIT_FIELD_MAXRANGEDDAMAGE
+                $RegEx65 = '/Block Value 64: [0-9]{1,12}\/([0-9]+(.[0-9]{1,12}|))/'; // bounding radius
+                $RegEx66 = '/Block Value 65: [0-9]{1,12}\/([0-9]+(.[0-9]{1,12}|))/'; // combat reach
 			}
 			else
 			{
@@ -117,6 +117,8 @@ if (isset($_POST['formdata']) && isset($dbh) && !isset($e)) {
 				// $rangedap    = $block[126]; // UNIT_FIELD_RANGED_ATTACK_POWER
 				// $rangedmindmg = $block[129]; // UNIT_FIELD_MINRANGEDDAMAGE
 				// $rangedmaxdmg = $block[130]; // UNIT_FIELD_MAXRANGEDDAMAGE
+                $RegEx65 = '/Block Value 65: [0-9]{1,12}\/([0-9]+(.[0-9]{1,12}|))/'; // bounding radius
+                $RegEx66 = '/Block Value 66: [0-9]{1,12}\/([0-9]+(.[0-9]{1,12}|))/'; // combat reach
 			}
             if (isset($bytes0)) {
                 $powerType= ($bytes0 & 2147483647) >> 24;
