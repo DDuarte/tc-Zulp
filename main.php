@@ -24,102 +24,57 @@ $regexveh = '/Vehicle ID: ([0-9]*)/'; // vehicle id
 
 if (isset($_POST['formdata']) && isset($dbh) && !isset($e)) {
     $formData = $_REQUEST['formdata'];
-    $data = explode("Block Value 0:", $formData["blockdata"]);
-    $d = preg_match_all('/Block Value 0:/',$formData["blockdata"],$s); // returns the number of "Block Value 0:" found in input data
+    $data = explode("OBJECT_FIELD_GUID:", $formData["blockdata"]);
+    $d = preg_match_all('/OBJECT_FIELD_GUID:/',$formData["blockdata"],$s); // returns the number of "Block Value 0:" found in input data
     while ($i <= $d) {
         $data2 = explode("\n", $data[$i]);
-        $RegEx = '/(Block Value ){1}([0-9]{1,3})(: {1}){1}([0-9]{1,12})/';
+        $RegEx = '/()([A-Z0-9]+_[A-Z0-9]+_[A-Z0-9_]+)(: {1}){1}([0-9]{1,12})/';
         foreach ($data2 as $key => $Value) {
             preg_match($RegEx, $Value, $temp);
             if ($temp[2] != "") $block[$temp[2]] = $temp[4];
-            // Note: commented out updatefields are not sent in sniffs
-            $type           = $block[2]; // OBJECT_FIELD_TYPE
-            $entry          = $block[3]; // OBJECT_FIELD_ENTRY
-            // $size        = $block[4]; // OBJECT_FIELD_SCALE_X
-            
-			if ($_GET['old'] == 'true')
-			{
-				$bytes0         = $block[22]; // UNIT_FIELD_BYTES_0
-				$maxhp          = $block[31]; // UNIT_FIELD_MAXHEALTH
-				$level          = $block[53]; // UNIT_FIELD_LEVEL
-				$faction        = $block[54]; // UNIT_FIELD_FACTIONTEMPLATE
-				$equip1         = $block[55]; // UNIT_VIRTUAL_ITEM_SLOT_ID
-				$equip2         = $block[56]; // UNIT_VIRTUAL_ITEM_SLOT_ID
-				$equip3         = $block[57]; // UNIT_VIRTUAL_ITEM_SLOT_ID
-				$unitFlags      = $block[58]; // UNIT_FIELD_FLAGS
-				// $aura        = $block[60]; // UNIT_FIELD_AURASTATE
-				$meleeTime      = $block[61]; // UNIT_FIELD_BASEATTACKTIME
-				// $meleetime2  = $block[62]; // UNIT_FIELD_BASEATTACKTIME dupe
-				// $rangedtime  = $block[63]; // UNIT_FIELD_RANGEDATTACKTIME
-				$model          = $block[66]; // UNIT_FIELD_DISPLAYID
-				$model2         = $block[67]; // UNIT_FIELD_NATIVEDISPLAYID dupe
-				$mount          = $block[68]; // UNIT_FIELD_MOUNTDISPLAYID
-				// $mindmg      = $block[70]; // UNIT_FIELD_MINDAMAGE
-				// $maxdmg      = $block[71]; // UNIT_FIELD_MAXDAMAGE
-				$bytes1         = $block[73]; // UNIT_FIELD_BYTES_1
-				$dynamicFlags   = $block[78]; // UNIT_DYNAMIC_FLAGS
-				$npcFlags       = $block[82]; // UNIT_NPC_FLAGS
-				$emote          = $block[83]; // UNIT_NPC_EMOTESTATE
-				// $resistance1 = $block[99]; // UNIT_FIELD_RESISTANCES
-				// $resistance2 = $block[100]; // UNIT_FIELD_RESISTANCES
-				// $resistance3 = $block[101]; // UNIT_FIELD_RESISTANCES
-				// $resistance4 = $block[102]; // UNIT_FIELD_RESISTANCES
-				// $resistance5 = $block[103]; // UNIT_FIELD_RESISTANCES
-				// $resistance6 = $block[104]; // UNIT_FIELD_RESISTANCES
-				// $resistance7 = $block[105]; // UNIT_FIELD_RESISTANCES
-				// $manamod     = $block[120]; // UNIT_FIELD_BASE_MANA
-				// $healthmod   = $block[121]; // UNIT_FIELD_BASE_HEALTH
-				$bytes2         = $block[122]; // UNIT_FIELD_BYTES_2
-				// $meleeap     = $block[123]; // UNIT_FIELD_ATTACK_POWER
-				// $dmgmultiplier = $block[125]; // UNIT_FIELD_ATTACK_POWER_MULTIPLIER
-				// $rangedap    = $block[126]; // UNIT_FIELD_RANGED_ATTACK_POWER
-				// $rangedmindmg = $block[129]; // UNIT_FIELD_MINRANGEDDAMAGE
-				// $rangedmaxdmg = $block[130]; // UNIT_FIELD_MAXRANGEDDAMAGE
-                $RegEx65 = '/Block Value 64: [0-9]{1,12}\/([0-9]+(.[0-9]{1,12}|))/'; // bounding radius
-                $RegEx66 = '/Block Value 65: [0-9]{1,12}\/([0-9]+(.[0-9]{1,12}|))/'; // combat reach
-			}
-			else
-			{
-				// Updatefields: creature only
-				$bytes0         = $block[23]; // UNIT_FIELD_BYTES_0
-				$maxhp          = $block[32]; // UNIT_FIELD_MAXHEALTH
-				$level          = $block[54]; // UNIT_FIELD_LEVEL
-				$faction        = $block[55]; // UNIT_FIELD_FACTIONTEMPLATE
-				$equip1         = $block[56]; // UNIT_VIRTUAL_ITEM_SLOT_ID
-				$equip2         = $block[57]; // UNIT_VIRTUAL_ITEM_SLOT_ID
-				$equip3         = $block[58]; // UNIT_VIRTUAL_ITEM_SLOT_ID
-				$unitFlags      = $block[59]; // UNIT_FIELD_FLAGS
-				// $aura        = $block[61]; // UNIT_FIELD_AURASTATE
-				$meleeTime      = $block[62]; // UNIT_FIELD_BASEATTACKTIME
-				// $meleetime2  = $block[63]; // UNIT_FIELD_BASEATTACKTIME dupe
-				// $rangedtime  = $block[64]; // UNIT_FIELD_RANGEDATTACKTIME
-				$model          = $block[67]; // UNIT_FIELD_DISPLAYID
-				$model2         = $block[68]; // UNIT_FIELD_NATIVEDISPLAYID dupe
-				$mount          = $block[69]; // UNIT_FIELD_MOUNTDISPLAYID
-				// $mindmg      = $block[70]; // UNIT_FIELD_MINDAMAGE
-				// $maxdmg      = $block[71]; // UNIT_FIELD_MAXDAMAGE
-				$bytes1         = $block[74]; // UNIT_FIELD_BYTES_1
-				$dynamicFlags   = $block[79]; // UNIT_DYNAMIC_FLAGS
-				$npcFlags       = $block[82]; // UNIT_NPC_FLAGS
-				$emote          = $block[83]; // UNIT_NPC_EMOTESTATE
-				// $resistance1 = $block[99]; // UNIT_FIELD_RESISTANCES
-				// $resistance2 = $block[100]; // UNIT_FIELD_RESISTANCES
-				// $resistance3 = $block[101]; // UNIT_FIELD_RESISTANCES
-				// $resistance4 = $block[102]; // UNIT_FIELD_RESISTANCES
-				// $resistance5 = $block[103]; // UNIT_FIELD_RESISTANCES
-				// $resistance6 = $block[104]; // UNIT_FIELD_RESISTANCES
-				// $resistance7 = $block[105]; // UNIT_FIELD_RESISTANCES
-				// $manamod     = $block[120]; // UNIT_FIELD_BASE_MANA
-				// $healthmod   = $block[121]; // UNIT_FIELD_BASE_HEALTH
-				$bytes2         = $block[122]; // UNIT_FIELD_BYTES_2
-				// $meleeap     = $block[123]; // UNIT_FIELD_ATTACK_POWER
-				// $dmgmultiplier = $block[125]; // UNIT_FIELD_ATTACK_POWER_MULTIPLIER
-				// $rangedap    = $block[126]; // UNIT_FIELD_RANGED_ATTACK_POWER
-				// $rangedmindmg = $block[129]; // UNIT_FIELD_MINRANGEDDAMAGE
-				// $rangedmaxdmg = $block[130]; // UNIT_FIELD_MAXRANGEDDAMAGE
-                $RegEx65 = '/Block Value 65: [0-9]{1,12}\/([0-9]+(.[0-9]{1,12}|))/'; // bounding radius
-                $RegEx66 = '/Block Value 66: [0-9]{1,12}\/([0-9]+(.[0-9]{1,12}|))/'; // combat reach
-			}
+
+            $type           = $block["OBJECT_FIELD_TYPE"];
+            $entry          = $block["OBJECT_FIELD_ENTRY"];
+            $size           = $block["OBJECT_FIELD_SCALE_X"];
+            $bytes0         = $block["UNIT_FIELD_BYTES_0"];
+            $maxhp          = $block["UNIT_FIELD_MAXHEALTH"];
+            $level          = $block["UNIT_FIELD_LEVEL"];
+            $faction        = $block["UNIT_FIELD_FACTIONTEMPLATE"];
+            $equip1         = $block["UNIT_VIRTUAL_ITEM_SLOT_ID1"];
+            $equip2         = $block["UNIT_VIRTUAL_ITEM_SLOT_ID2"];
+            $equip3         = $block["UNIT_VIRTUAL_ITEM_SLOT_ID3"];
+            $unitFlags      = $block["UNIT_FIELD_FLAGS"];
+            // $aura        = $block["UNIT_FIELD_AURASTATE"];
+            $meleeTime      = $block["UNIT_FIELD_BASEATTACKTIME"];
+            $meleetime2     = $block["UNIT_FIELD_BASEATTACKTIME dupe"];
+            $rangedtime     = $block["UNIT_FIELD_RANGEDATTACKTIME"];
+            $model          = $block["UNIT_FIELD_DISPLAYID"];
+            $model2         = $block["UNIT_FIELD_NATIVEDISPLAYID dupe"];
+            $mount          = $block["UNIT_FIELD_MOUNTDISPLAYID"];
+            $mindmg         = $block["UNIT_FIELD_MINDAMAGE"];
+            $maxdmg         = $block["UNIT_FIELD_MAXDAMAGE"];
+            $bytes1         = $block["UNIT_FIELD_BYTES_1"];
+            $dynamicFlags   = $block["UNIT_DYNAMIC_FLAGS"];
+            $npcFlags       = $block["UNIT_NPC_FLAGS"];
+            $emote          = $block["UNIT_NPC_EMOTESTATE"];
+            $resistance1    = $block[99]; // UNIT_FIELD_RESISTANCES
+            $resistance2    = $block[100]; // UNIT_FIELD_RESISTANCES
+            $resistance3    = $block[101]; // UNIT_FIELD_RESISTANCES
+            $resistance4    = $block[102]; // UNIT_FIELD_RESISTANCES
+            $resistance5    = $block[103]; // UNIT_FIELD_RESISTANCES
+            $resistance6    = $block[104]; // UNIT_FIELD_RESISTANCES
+            $resistance7    = $block[105]; // UNIT_FIELD_RESISTANCES
+            $manamod        = $block[120]; // UNIT_FIELD_BASE_MANA
+            $healthmod      = $block[121]; // UNIT_FIELD_BASE_HEALTH
+            $bytes2         = $block["UNIT_FIELD_BYTES_2"];
+            $meleeap        = $block[123]; // UNIT_FIELD_ATTACK_POWER
+            $dmgmultiplier  = $block[125]; // UNIT_FIELD_ATTACK_POWER_MULTIPLIER
+            $rangedap       = $block[126]; // UNIT_FIELD_RANGED_ATTACK_POWER
+            $rangedmindmg   = $block[129]; // UNIT_FIELD_MINRANGEDDAMAGE
+            $rangedmaxdmg   = $block[130]; // UNIT_FIELD_MAXRANGEDDAMAGE
+            $RegEx65 = '/UNIT_FIELD_BOUNDINGRADIUS: [0-9]{1,12}\/([0-9]+(.[0-9]{1,12}|))/'; // bounding radius
+            $RegEx66 = '/UNIT_FIELD_COMBATREACH: [0-9]{1,12}\/([0-9]+(.[0-9]{1,12}|))/'; // combat reach
+
             if (isset($bytes0)) {
                 $powerType= ($bytes0 & 2147483647) >> 24;
                 $gender   = ($bytes0 & 16711680) >> 16;
@@ -139,14 +94,14 @@ if (isset($_POST['formdata']) && isset($dbh) && !isset($e)) {
             if(isset($vehicler)) $vehicle = $vehicler[1];
             
             // Update fields: gameobject only
-            $gModel  = $block[8]; // GAMEOBJECT_DISPLAYID
-            $gFlags  = $block[9]; // GAMEOBJECT_FLAGS
-            // $gRot1   = $block[10]; // GAMEOBJECT_PARENTROTATION
-            // $gRot2   = $block[11]; // GAMEOBJECT_PARENTROTATION
-            // $gRot3   = $block[12]; // GAMEOBJECT_PARENTROTATION
-            $gFaction = $block[15]; // GAMEOBJECT_FACTION
-            // &gLevel = $block[16]; // GAMEOBJECT_LEVEL (not implemented on DB)
-            // $gBytes1 = $block[17]; // GAMEOBJECT_BYTES_1 (unknown use)
+            $gModel   = $block["GAMEOBJECT_DISPLAYID"];
+            $gFlags   = $block["GAMEOBJECT_FLAGS"];
+            $gRot1    = $block["GAMEOBJECT_PARENTROTATION1"];
+            $gRot2    = $block["GAMEOBJECT_PARENTROTATION2"];
+            $gRot3    = $block["GAMEOBJECT_PARENTROTATION3"];
+            $gFaction = $block["GAMEOBJECT_FACTION"]; // 
+            $gLevel   = $block["GAMEOBJECT_LEVEL"]; // (not implemented on DB)
+            $gBytes1  = $block["GAMEOBJECT_BYTES_1"]; // (unknown use)
         }
         if (isset($block)) {
             switch ($type) {
