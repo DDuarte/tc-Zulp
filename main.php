@@ -148,7 +148,7 @@ if (isset($_POST['formdata']) && isset($dbh) && !isset($e)) {
                         }
                         // Levels
                         if (($npc->minlevel != $npc->maxlevel)) { // shoulda query wowhead instead and check if minlevel != maxlevel
-                            $cache = dirname(__FILE__) . "\cache\c$entry.txt";
+                            $cache = dirname(__FILE__) . "/cache/c$entry.txt";
                             if (!file_exists($cache) || filemtime($cache) < (time() - $cache_check_time)) {
                                 $query = "http://www.wowhead.com/npc=$entry";
                                 $wh = file_get_contents($query, true);
