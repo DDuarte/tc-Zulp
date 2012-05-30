@@ -40,6 +40,7 @@ if (isset($_POST['formdata']) && isset($dbh) && !isset($e)) {
             $maxhp          = $block["UNIT_FIELD_MAXHEALTH"];
             $level          = $block["UNIT_FIELD_LEVEL"];
             $faction        = $block["UNIT_FIELD_FACTIONTEMPLATE"];
+            $equip15         = $block["UNIT_VIRTUAL_ITEM_SLOT_ID"];
             $equip1         = $block["UNIT_VIRTUAL_ITEM_SLOT_ID1"];
             $equip2         = $block["UNIT_VIRTUAL_ITEM_SLOT_ID2"];
             $equip3         = $block["UNIT_VIRTUAL_ITEM_SLOT_ID3"];
@@ -194,7 +195,9 @@ if (isset($_POST['formdata']) && isset($dbh) && !isset($e)) {
                         else $log .= "&#8226; Dynamicflags of $entry ($name)does not need an update.<br />";
                     }
                     // Equipment template
-                    if (isset($equip1) || isset($equip2) || isset($equip3)) {
+                    if (isset($equip1) || isset($equip2) || isset($equip3) || isset($equip15)) {
+                        if (empty($equip15)) $equip15 = 0;
+                        else $equip1 = $equip15;
                         if (empty($equip1)) $equip1 = 0;
                         if (empty($equip2)) $equip2 = 0;
                         if (empty($equip3)) $equip3 = 0;
