@@ -75,6 +75,7 @@ if (isset($_POST['formdata']) && isset($dbh) && !isset($e)) {
             $rangedmaxdmg   = $block["UNIT_FIELD_MAXRANGEDDAMAGE"];
             $RegEx65 = '/UNIT_FIELD_BOUNDINGRADIUS: [0-9]{1,12}\/([0-9]+(.[0-9]{1,12}|))/'; // bounding radius
             $RegEx66 = '/UNIT_FIELD_COMBATREACH: [0-9]{1,12}\/([0-9]+(.[0-9]{1,12}|))/'; // combat reach
+            $RegExhh = '/UNIT_FIELD_HOVERHEIGHT: [0-9]{1,12}\/([0-9]+(.[0-9]{1,12}|))/'; // hover height
 
             if (isset($bytes0)) {
                 $powerType= ($bytes0 & 2147483647) >> 24;
@@ -87,6 +88,8 @@ if (isset($_POST['formdata']) && isset($dbh) && !isset($e)) {
             $boundingRadius = $tmp[1];
             preg_match($RegEx66, $data[$i], $tmp);
             $combatReach = $tmp[1];
+            preg_match($RegExhh, $data[$i], $tmp);
+            $hoverHeight = $tmp[1];
             preg_match($regexwalk, $_REQUEST['formdata']['blockdata'], $walker);
             if(isset($walker)) $walkspeed = $walker[1]/$walkBase;
             preg_match($regexrun, $_REQUEST['formdata']['blockdata'], $runner);
@@ -239,6 +242,10 @@ if (isset($_POST['formdata']) && isset($dbh) && !isset($e)) {
                         if ($class != $npc->unit_class) $up .= " `unit_class`=$class ";
                         else $log .= "&#8226; Unit_class of $entry ($name) does not need an update.<br />";
                     }
+                    if (isset($hoverHeight)) {
+                        if ($hoverHeight != $npc->HoverHeight) $up .= " `HoverHeight`=$hoverHeight ";
+                        else $log .= "&#8226; HoverHeight of $entry ($name) does not need an update.<br />";
+                    }
                     // Model
                     if (isset($model2)) {
                         /*if ($model2 != $npc->modelid1 || $model2 != $npc->modelid2 || $model2 != $npc->modelid3 || $model2 != $npc->modelid4)
@@ -368,7 +375,7 @@ if (isset($_POST['formdata']) && isset($dbh) && !isset($e)) {
                     $log .= "&#8226; ERROR: Type ($type) not found.<br />";
             }
         }
-        unset($vehicle,$vehicler,$walkspeed,$runspeed,$upheader,$upfoot,$eqheader,$addon,$basehp,$basehpi,$block,$boundingRadius,$bytes0,$bytes1,$bytes2,$cache,$cachefile,$class,$combatReach,$dded,$dynamicFlags,$emote,$entry,$eq,$eqs,$equip,$equip1,$equip2,$equip3,$equipe,$exp,$faction,$gFlags,$gLevel,$gModel,$gRot1,$gRot2,$gRot3,$gender,$header,$health_mod,$hpstat,$ins,$level,$maxLevel,$maxhp,$meleeTime,$minLevel,$model,$model2,$mount,$name,$ndec,$npc,$npcFlags,$powerType,$query,$race,$sql,$stmt,$type,$udder,$unitFlags,$up,$up2,$up3,$wh,$tmp,$temp);
+        unset($vehicle,$vehicler,$walkspeed,$runspeed,$upheader,$upfoot,$eqheader,$addon,$basehp,$basehpi,$block,$boundingRadius,$bytes0,$bytes1,$bytes2,$cache,$cachefile,$class,$combatReach,$hoverHeight,$dded,$dynamicFlags,$emote,$entry,$eq,$eqs,$equip,$equip1,$equip2,$equip3,$equipe,$exp,$faction,$gFlags,$gLevel,$gModel,$gRot1,$gRot2,$gRot3,$gender,$header,$health_mod,$hpstat,$ins,$level,$maxLevel,$maxhp,$meleeTime,$minLevel,$model,$model2,$mount,$name,$ndec,$npc,$npcFlags,$powerType,$query,$race,$sql,$stmt,$type,$udder,$unitFlags,$up,$up2,$up3,$wh,$tmp,$temp);
         $i++;
         $sqlres = new GeSHi($result, 'sql');
     }
