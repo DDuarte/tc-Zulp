@@ -28,7 +28,7 @@ if (isset($_POST['formdata']) && isset($dbh) && !isset($e)) {
     $d = preg_match_all('/OBJECT_FIELD_GUID:/',$formData["blockdata"],$s); // returns the number of "Block Value 0:" found in input data
     while ($i <= $d) {
         $data2 = explode("\n", $data[$i]);
-        $RegEx = '/()([A-Z0-9]+_[A-Z0-9]+_[A-Z0-9_]+)(: {1}){1}([0-9]{1,12})/';
+        $RegEx = '/()([A-Z0-9]+_[A-Z0-9]+_*[A-Z0-9_]*)(: {1}){1}([0-9]{1,12})/';
         foreach ($data2 as $key => $Value) {
             preg_match($RegEx, $Value, $temp);
             if ($temp[2] != "") $block[$temp[2]] = $temp[4];
@@ -237,11 +237,12 @@ if (isset($_POST['formdata']) && isset($dbh) && !isset($e)) {
                             }
                         }
                     }
-                    // Unit_Class
+                    // Unit Class
                     if (isset($class)) {
                         if ($class != $npc->unit_class) $up .= " `unit_class`=$class ";
                         else $log .= "&#8226; Unit_class of $entry ($name) does not need an update.<br />";
                     }
+                    // Hover Height
                     if (isset($hoverHeight)) {
                         if ($hoverHeight != $npc->HoverHeight) $up .= " `HoverHeight`=$hoverHeight ";
                         else $log .= "&#8226; HoverHeight of $entry ($name) does not need an update.<br />";
@@ -336,10 +337,9 @@ if (isset($_POST['formdata']) && isset($dbh) && !isset($e)) {
                     }
                     // Flags
                     if (isset($gFlags)) {
-                        $cf = $go->flags;
                         if ($gFlags != $go->flags) {
                             $up .= " `flags`=`flags`|$gFlags ";
-                            $log .= "&#8226; Flags of $entry ($name) is $cf (vs $gFlags) in DB.<br />";
+                            $log .= "&#8226; Flags of $entry ($name) is $go->flags (vs $gFlags) in DB.<br />";
                         }
                         else $log .= "&#8226; Flags of $entry ($name) does not need an update.<br />";
                     }
