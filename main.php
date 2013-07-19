@@ -210,13 +210,12 @@ if (isset($_POST['formdata']) && isset($dbh) && !isset($e)) {
                         $eqs = $stmt->fetch(PDO::FETCH_OBJ);
                         $idequip = $eqs->id;
 
-                        if (empty($eqs->entry) {
+                        if (empty($eqs->entry)) {
                             $ins .= "-- Equipment of $entry ($name)\n";
                             $ins .= "DELETE FROM `creature_equip_template` WHERE `entry`=$entry;\n";
                             $ins .= "INSERT INTO `creature_equip_template` (`entry`,`id`,`itemEntry1`,`itemEntry2`,`itemEntry3`) VALUES \n";
                             $ins .= "($entry,1,$equip1,$equip2,$equip3);\n";
-                        }
-                        else {
+                        } else {
                             if ($eqs->itemEntry1 == $equip1 && $eqs->itemEntry2 == $equip2 && $eqs->itemEntry3 == $equip3)
                                 $log .= "&#8226; Equip template of $entry ($name) does not need an update.<br />";
                             else
