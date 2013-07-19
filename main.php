@@ -83,7 +83,7 @@ if (isset($_POST['formdata']) && isset($dbh) && !isset($e)) {
                 $class    = ($bytes0 & 65280) >> 8;
                 $race     = ($bytes0 & 255);
             }
-            
+
             preg_match($RegEx65, $data[$i], $tmp);
             $boundingRadius = $tmp[1];
             preg_match($RegEx66, $data[$i], $tmp);
@@ -96,14 +96,14 @@ if (isset($_POST['formdata']) && isset($dbh) && !isset($e)) {
             if(isset($runner)) $runspeed = $runner[1]/$runBase;
             preg_match($regexveh, $_REQUEST['formdata']['blockdata'], $vehicler);
             if(isset($vehicler)) $vehicle = $vehicler[1];
-            
+
             // Update fields: gameobject only
             $gModel   = $block["GAMEOBJECT_DISPLAYID"];
             $gFlags   = $block["GAMEOBJECT_FLAGS"];
             $gRot1    = $block["GAMEOBJECT_PARENTROTATION1"];
             $gRot2    = $block["GAMEOBJECT_PARENTROTATION2"];
             $gRot3    = $block["GAMEOBJECT_PARENTROTATION3"];
-            $gFaction = $block["GAMEOBJECT_FACTION"]; // 
+            $gFaction = $block["GAMEOBJECT_FACTION"]; //
             $gLevel   = $block["GAMEOBJECT_LEVEL"]; // (not implemented on DB)
             $gBytes1  = $block["GAMEOBJECT_BYTES_1"]; // (unknown use)
         }
@@ -204,37 +204,23 @@ if (isset($_POST['formdata']) && isset($dbh) && !isset($e)) {
                         if (empty($equip1)) $equip1 = 0;
                         if (empty($equip2)) $equip2 = 0;
                         if (empty($equip3)) $equip3 = 0;
-                        if ($npc->equipment_id != 0) {
-                            $equip = $npc->equipment_id;
-                            $sql = "SELECT * FROM creature_equip_template WHERE entry =$equip";
-                            $stmt = $dbh->query($sql);
-                            $eqs = $stmt->fetch(PDO::FETCH_OBJ);
+
+                        $sql = "SELECT * FROM creature_equip_template WHERE entry =$entry LIMIT 1";
+                        $stmt = $dbh->query($sql);
+                        $eqs = $stmt->fetch(PDO::FETCH_OBJ);
+                        $idequip = $eqs->id;
+
+                        if (empty($eqs->entry) {
+                            $ins .= "-- Equipment of $entry ($name)\n";
+                            $ins .= "DELETE FROM `creature_equip_template` WHERE `entry`=$entry;\n";
+                            $ins .= "INSERT INTO `creature_equip_template` (`entry`,`id`,`itemEntry1`,`itemEntry2`,`itemEntry3`) VALUES \n";
+                            $ins .= "($entry,1,$equip1,$equip2,$equip3);\n";
+                        }
+                        else {
                             if ($eqs->itemEntry1 == $equip1 && $eqs->itemEntry2 == $equip2 && $eqs->itemEntry3 == $equip3)
                                 $log .= "&#8226; Equip template of $entry ($name) does not need an update.<br />";
-                            else {
-                                $eqheader .= "SET @EquiEntry = XXX; -- (creature_equip_template.entry - need 1)\n";
-                                $up .= " `equipment_id`=@EquiEntry ";
-                                $ins .= "-- Equipment of $entry ($name)\n";
-                                $ins .= "DELETE FROM `creature_equip_template` WHERE `entry`=@EquiEntry;\n";
-                                $ins .= "INSERT INTO `creature_equip_template` (`entry`,`itemEntry1`,`itemEntry2`,`itemEntry3`) VALUES \n";
-                                $ins .= "(@EquiEntry,$equip1,$equip2,$equip3);\n";
-                            }
-                        } else {
-                            $sql = "SELECT * FROM creature_equip_template WHERE itemEntry1=$equip1 AND itemEntry2=$equip2 AND itemEntry3=$equip3";
-                            $stmt = $dbh->query($sql);
-                            $eq = $stmt->fetch(PDO::FETCH_OBJ);
-                            if ($eq == FALSE) {
-                                $eqheader .= "SET @EquiEntry = XXX; -- (creature_equip_template.entry - need 1)\n";
-                                $up .= " `equipment_id`=@EquiEntry ";
-                                $ins .= "-- Equipment of $entry ($name)\n";
-                                $ins .= "DELETE FROM `creature_equip_template` WHERE `entry`=@EquiEntry;\n";
-                                $ins .= "INSERT INTO `creature_equip_template` (`entry`,`itemEntry1`,`itemEntry2`,`itemEntry3`) VALUES\n";
-                                $ins .= "(@EquiEntry,$equip1,$equip2,$equip3);\n";
-                            }
-                            else {
-                                $equipe = $eq->entry;
-                                $up .= " `equipment_id`=$equipe ";
-                            }
+                            else
+                                $ins .= "UPDATE `creature_equip_template` SET `itemEntry1`=$equip1, `itemEntry2`=$equip2, `itemEntry3`=$equip3 WHERE `entry`=$entry AND `id`=$idequip;\n";
                         }
                     }
                     // Unit Class
@@ -308,7 +294,7 @@ if (isset($_POST['formdata']) && isset($dbh) && !isset($e)) {
                         if($vehicle != $npc->VehicleId) $up .= " `VehicleId`=$vehicle ";
                         else $log .= "&#8226; Vehicleid of $entry ($name) does not need an update.<br />";
                     }
-                    
+
                     // sql output
                     $up2 = commatize($up);
                     $up3 = spaceLess($up2);
